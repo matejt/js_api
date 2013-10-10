@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <link rel="stylesheet" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.5/js/dojo/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.5/js/esri/css/esri.css">
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!--<script>dojoConfig = {parseOnLoad: true}</script>-->
+    <script src="http://serverapi.arcgisonline.com/jsapi/arcgis/3.5/"></script>
+
+    <script src="js/basic.js"></script>
+
+</head>
+<body class="claro">
+<div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="gutters:true, liveSplitters:false" id="borderContainerTwo">
+    <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top', splitter:false">
+        Here come logo and GIS toolbar
+    </div>
+    <div data-dojo-type="dijit/layout/TabContainer" tabPosition="bottom" data-dojo-props="minSize:20, region:'leading',
+            splitter:true" style="width: 300px;" id="leftTabContainer">
+        <div data-dojo-type="dijit/layout/ContentPane" title="Legend">
+            <div id="legendDiv"></div>
+        </div>
+        <div data-dojo-type="dijit/layout/ContentPane" title="Select">Some other stuff...
+        </div>
+        <div data-dojo-type="dijit/layout/ContentPane" title="Query" selected="true">Some more stuff...
+        </div>
+    </div><!-- end TabContainer -->
+    <div data-dojo-type="dijit/layout/TabContainer" data-dojo-props="region:'center', tabStrip:true">
+        <div id="map" data-dojo-type="dijit/layout/ContentPane" title="Map" selected="true"></div>
+        <div data-dojo-type="dijit/layout/ContentPane" title="Info">
+            Some web page...
+        </div>
+    </div><!-- end TabContainer -->
+</div><!-- end BorderContainer -->
+</body>
+</html>
