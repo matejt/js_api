@@ -1,8 +1,8 @@
 
 require([
-    "dojo/ready",
     "dojo/on",
     "dojo/parser",
+    "agsjs/dijit/TOC",
     "dojo/_base/array",
     "esri/map",
     "esri/layers/FeatureLayer",
@@ -12,19 +12,17 @@ require([
     "dijit/layout/BorderContainer",
     "dijit/layout/TabContainer",
     "dijit/layout/AccordionContainer",
-    "dijit/layout/AccordionPane"
-    ], function (
-        ready,
+    "dijit/layout/AccordionPane",
+    "dojo/domReady!"], function (
         on,
         parser,
+        TOC,
         arrayUtils,
         Map,
         FeatureLayer,
         TiledLayer,
         Legend
         ) {
-        ready(function() {
-
             parser.parse();
 
             var map = new Map("map",{
@@ -55,16 +53,40 @@ require([
             var tiledSoilLayer = new TiledLayer(soilLayerUrl);
             tiledSoilLayer.setOpacity(0.3);
 
+            var infoTemplate = new esri.InfoTemplate();
+            infoTemplate.setTitle("Population in ${NAME}");
+            infoTemplate.setContent( "<b>2007: </b>${POP2007:compare}<br/>"
+                + "<b>2007 density: </b>${POP07_SQMI:compare}<br/><br/>"
+                + "<b>2000: </b>${POP2000:NumberFormat}<br/>"
+                + "<b>2000 density: </b>${POP00_SQMI:NumberFormat}");
+
             //add the legend
             map.on("layers-add-result", function (evt) {
                 var legendDijit = new Legend({
                     map: map
                 }, "legendDiv");
                 legendDijit.startup();
+
+                try {
+                    toc = new TOC({
+                        map: map,
+                        layerInfos: [{
+                            layer: statesFeatureLayer,
+                            title: "USA States"
+                        }, {
+                            layer: tiledSoilLayer,
+                            title: "Soil Map",
+                            // collapsed: false, // whether this root layer should be collapsed initially, default false.
+                            slider: true // whether to display a transparency slider.
+                        }]
+                    }, 'tocDiv');
+                    toc.startup();
+                } catch (e) {
+                    alert(e);
+                }
             });
 
             map.addLayers([tiledSoilLayer, statesFeatureLayer]);
     });
-});
 
 
