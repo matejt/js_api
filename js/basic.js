@@ -13,6 +13,7 @@ require([
     "dijit/layout/TabContainer",
     "dijit/layout/AccordionContainer",
     "dijit/layout/AccordionPane",
+    "dojox/layout/ExpandoPane",
     "dojo/domReady!"], function (
         on,
         parser,
