@@ -15,7 +15,10 @@ require([
     "esri/geometry/Extent",
     "esri/SpatialReference",
     "esri/dijit/Measurement",
-    "dijit/form/ComboBox",
+    "esri/toolbars/draw",
+    "esri/graphic",
+    "esri/symbols/SimpleFillSymbol",
+    "dijit/form/FilteringSelect",
     "dijit/layout/ContentPane",
     "dijit/layout/BorderContainer",
     "dijit/layout/TabContainer",
@@ -39,7 +42,10 @@ require([
         Extent,
         SpatialReference,
         Measurement,
-        ComboBox
+        Draw,
+        Graphic,
+        SimpleFillSymbol,
+        FilteringSelect
         ) {
             parser.parse();
 
@@ -69,7 +75,8 @@ require([
             tiledSoilLayer.setOpacity(0.3);
 
             //add the legend
-            map.on("layers-add-result", function (evt) {
+            on(map,"layers-add-result", function (evt) {
+                console.log("inside map on event")
                 var legendDijit = new Legend({
                     map: map
                 }, "legendDiv");
@@ -114,16 +121,48 @@ require([
                     {name:"Rectangle", id:"RECT"},
                     {name:"Polygon", id:"POLY"},
                     {name:"Circle", id:"CIRC"},
-                    {name:"Freeform", id:"FREE"}
+                    {name:"Freehand", id:"FREE"}
                 ]
             });
 
-            var spatialQueryComboBox = new ComboBox({
+            var spatialQueryFilteringSelect = new FilteringSelect({
                 id: "selectionType",
                 style:{width: "100px"},
                 store: spatialSelectionStore,
-                searchAttr: "name"
+                searchAttr: "name",
+                onChange: activateDrawTool
             }, "spatialSelectionType");
 
+            var drawToolbar = new Draw(map, {
+                showTooltips: false,
+                tooltipOffset: 20,
+                drawTime: 90
+            });
 
+            function activateDrawTool(value) {
+                switch (value) {
+                    case "RECT":
+                        drawToolbar.activate(Draw.RECTANGLE);
+                        break;
+                    case "POLY":
+                        drawToolbar.activate(Draw.POLYGON);
+                        break;
+                    case "CIRC":
+                        drawToolbar.activate(Draw.CIRCLE);
+                        break;
+                    case "FREE":
+                        drawToolbar.activate(Draw.FREEHAND_POLYGON);
+                        break;
+                }
+            }
+
+            drawToolbar.on("onDrawEnd", addToMap);
+            on(drawToolbar, "draw-end", addToMap);
+//            dojo.connect(tb, "onDrawEnd", addGraphic);
+            function addToMap(evt) {
+                alert("drawing completed");
+                drawToolbar.deactivate();
+                var graphic = new Graphic(evt.geometry, new SimpleFillSymbol());
+                map.graphics.add(graphic);
+            }
 });
