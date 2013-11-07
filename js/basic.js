@@ -4,62 +4,69 @@ require([
     "dojo/parser",
     "agsjs/dijit/TOC",
     "dojo/_base/array",
+    "dojo/store/Memory",
     "esri/map",
     "esri/layers/FeatureLayer",
     "esri/layers/ArcGISTiledMapServiceLayer",
+    "esri/layers/ArcGISDynamicMapServiceLayer",
     "esri/dijit/Legend",
+    "esri/InfoTemplate",
+    "esri/dijit/BasemapGallery",
+    "esri/geometry/Extent",
+    "esri/SpatialReference",
+    "esri/dijit/Measurement",
+    "dijit/form/ComboBox",
     "dijit/layout/ContentPane",
     "dijit/layout/BorderContainer",
     "dijit/layout/TabContainer",
     "dijit/layout/AccordionContainer",
     "dijit/layout/AccordionPane",
     "dojox/layout/ExpandoPane",
+    "dijit/TitlePane",
     "dojo/domReady!"], function (
         on,
         parser,
         TOC,
         arrayUtils,
+        Memory,
         Map,
         FeatureLayer,
         TiledLayer,
-        Legend
+        DynamicLayer,
+        Legend,
+        InfoTemplate,
+        BasemapGallery,
+        Extent,
+        SpatialReference,
+        Measurement,
+        ComboBox
         ) {
             parser.parse();
 
+            initExtent = new Extent(-99.4081,28.0324,-98.8030,28.6458, new SpatialReference({ wkid:4326 }));
+
             var map = new Map("map",{
-//                basemap:"topo",
                 basemap:"streets",
-                center:[-100,37], //long, lat
-                zoom:4,
-                sliderStyle:"small"
+                extent: initExtent,
+                sliderStyle:"large"
             });
 
-            statesUrl = "http://server.arcgisonline.com/ArcGIS/rest/services/Demographics/USA_Median_Net_Worth/MapServer/4";
-            outFields = ["OBJECTID", "NAME", "MEDNW_CY", "NW1M_CY"];
-
-            var statesFeatureLayer = new FeatureLayer(statesUrl, {
-                id: "states",
-                mode: 1, // ONDEMAND, could also use FeatureLayer.MODE_ONDEMAND
-                outFields: outFields
+            var json = {title:"Attributes",content:"<tr>API: <td>${API}</tr></td><br><tr>Operator: <td>${operatorName}</tr><br><tr>objectId: <td>${OBJECTID}</tr></td>"}
+            var infoTemplate = new InfoTemplate("Well Information", "${*}");
+//            rigsUrlFeatureLayer = "http://services1.arcgis.com/5gRznzsV72O3QAUT/arcgis/rest/services/EagleFord_07_Feature/FeatureServer/0";
+            rigsUrlFeatureLayer = "http://services1.arcgis.com/5gRznzsV72O3QAUT/arcgis/rest/services/EagleFord_08/FeatureServer/0";
+            var rigsFeatureLayer = new FeatureLayer(rigsUrlFeatureLayer, {
+                id: "rigsFeatures",
+                infoTemplate: infoTemplate,
+                outFields : ["*"],
+                mode: FeatureLayer.MODE_ONDEMAND // ONDEMAND, could also use FeatureLayer.MODE_ONDEMAND
             });
 
-            statesFeatureLayer.on("load", function() {
-                statesFeatureLayer.maxScale = 0; // show the states layer at all scales
-                statesFeatureLayer.setSelectionSymbol(new SimpleFillSymbol().setOutline(null).setColor("#AEC7E3"));
-            });
-
-            statesFeatureLayer.setOpacity(0.5);
+//            var rigsTiledLayer = new TiledLayer(rigsUrlLayer);
 
             soilLayerUrl = "http://server.arcgisonline.com/ArcGIS/rest/services/Specialty/Soil_Survey_Map/MapServer";
             var tiledSoilLayer = new TiledLayer(soilLayerUrl);
             tiledSoilLayer.setOpacity(0.3);
-
-            var infoTemplate = new esri.InfoTemplate();
-            infoTemplate.setTitle("Population in ${NAME}");
-            infoTemplate.setContent( "<b>2007: </b>${POP2007:compare}<br/>"
-                + "<b>2007 density: </b>${POP07_SQMI:compare}<br/><br/>"
-                + "<b>2000: </b>${POP2000:NumberFormat}<br/>"
-                + "<b>2000 density: </b>${POP00_SQMI:NumberFormat}");
 
             //add the legend
             map.on("layers-add-result", function (evt) {
@@ -72,8 +79,9 @@ require([
                     toc = new TOC({
                         map: map,
                         layerInfos: [{
-                            layer: statesFeatureLayer,
-                            title: "USA States"
+                            layer: rigsFeatureLayer,
+                            title: "rigsFeatures",
+                            slider: true // whether to display a transparency slider.
                         }, {
                             layer: tiledSoilLayer,
                             title: "Soil Map",
@@ -85,9 +93,37 @@ require([
                 } catch (e) {
                     alert(e);
                 }
+
+                var measurement = new Measurement({
+                  map: map
+                }, dojo.byId('measurementDiv'));
+                measurement.startup();
             });
 
-            map.addLayers([tiledSoilLayer, statesFeatureLayer]);
-    });
+            map.addLayers([tiledSoilLayer, rigsFeatureLayer]);
+
+            //add the basemap gallery, in this case we'll display maps from ArcGIS.com including bing maps
+            var basemapGallery = new BasemapGallery({
+              showArcGISBasemaps: true,
+              map: map
+            }, "basemapGallery");
+            basemapGallery.startup();
+
+            var spatialSelectionStore = new Memory({
+                data: [
+                    {name:"Rectangle", id:"RECT"},
+                    {name:"Polygon", id:"POLY"},
+                    {name:"Circle", id:"CIRC"},
+                    {name:"Freeform", id:"FREE"}
+                ]
+            });
+
+            var spatialQueryComboBox = new ComboBox({
+                id: "selectionType",
+                style:{width: "100px"},
+                store: spatialSelectionStore,
+                searchAttr: "name"
+            }, "spatialSelectionType");
 
 
+});

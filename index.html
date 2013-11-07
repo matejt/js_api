@@ -24,9 +24,8 @@
 <body class="claro">
 <div data-dojo-type="dijit/layout/BorderContainer" data-dojo-props="gutters:true, liveSplitters:false" id="borderContainerTwo">
     <div data-dojo-type="dijit/layout/ContentPane" data-dojo-props="region:'top', splitter:false">
-        Here comes logo and GIS toolbar
     </div>
-    <div data-dojo-type="dojox/layout/ExpandoPane" title="Left Expando" data-dojo-props="title: 'Left Expando', maxWidth:225, splitter:true, region:'leading'" style="width: 225px;">
+    <div data-dojo-type="dojox/layout/ExpandoPane" data-dojo-props="maxWidth:225, splitter:true, region:'leading'" style="width: 225px;">
         <div data-dojo-type="dijit/layout/TabContainer" tabPosition="bottom" data-dojo-props="minSize:20, region:'leading',
                 splitter:true" style="width: 300px;" id="leftTabContainer">
             <div data-dojo-type="dijit/layout/ContentPane" title="Legend" selected="true">
@@ -35,16 +34,39 @@
             <div data-dojo-type="dijit/layout/ContentPane" title="Select">
                 <div id="tocDiv"></div>
             </div>
-            <div data-dojo-type="dijit/layout/ContentPane" title="Query" selected="true">Some more stuff...
+            <div data-dojo-type="dijit/layout/ContentPane" title="Query" selected="true">
+                <div id="measurePane" data-dojo-type="dijit.TitlePane" data-dojo-props="title:'Measurement', closable:'false', open:'false'">
+                    <div id='measurementDiv'></div>
+                </div>
+                <div id="spatialQueryPane" data-dojo-type="dijit.TitlePane" data-dojo-props="title:'Spatial Query', closable:'false', open:'false'">
+                    Select by:
+                    <div id='spatialSelectionType'></div>
+                </div>
+                <div id="attributeQueryPane" data-dojo-type="dijit.TitlePane" data-dojo-props="title:'Attribute Query', closable:'false', open:'false'">
+                    attribute query functionality
+                </div>
             </div>
         </div><!-- end TabContainer -->
     </div>
     <div data-dojo-type="dijit/layout/TabContainer" data-dojo-props="region:'center', tabStrip:true">
-        <div id="map" data-dojo-type="dijit/layout/ContentPane" title="Map" selected="true"></div>
+        <div id="map" data-dojo-type="dijit/layout/ContentPane" title="Map" selected="true">
+              <div style="position:absolute; right:20px; top:10px; z-Index:999;">
+                <div data-dojo-type="dijit/TitlePane"
+                    data-dojo-props="title:'Switch Basemap', closable:false,  open:false">
+                    <div data-dojo-type="dijit/layout/ContentPane" style="width:380px; height:280px; overflow:auto;">
+                        <div id="basemapGallery" ></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
         <div data-dojo-type="dijit/layout/ContentPane" title="Info">
-            Some web page...
+            more information...
         </div>
     </div><!-- end TabContainer -->
+    <div data-dojo-type="dojox/layout/ExpandoPane" data-dojo-props="title:'Attribute data', splitter:true, region:'bottom', startExpanded:false" style="height: 225px;">
+    </div>
+
 </div><!-- end BorderContainer -->
 </body>
 </html>
