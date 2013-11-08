@@ -1,6 +1,7 @@
 
 require([
     "dojo/on",
+    "dojo/dom",
     "dojo/parser",
     "agsjs/dijit/TOC",
     "dojo/_base/array",
@@ -19,6 +20,7 @@ require([
     "esri/graphic",
     "esri/symbols/SimpleFillSymbol",
     "dijit/form/FilteringSelect",
+    "dijit/form/Button",
     "dijit/layout/ContentPane",
     "dijit/layout/BorderContainer",
     "dijit/layout/TabContainer",
@@ -28,6 +30,7 @@ require([
     "dijit/TitlePane",
     "dojo/domReady!"], function (
         on,
+        dom,
         parser,
         TOC,
         arrayUtils,
@@ -45,7 +48,8 @@ require([
         Draw,
         Graphic,
         SimpleFillSymbol,
-        FilteringSelect
+        FilteringSelect,
+        Button
         ) {
             parser.parse();
 
@@ -156,13 +160,20 @@ require([
                 }
             }
 
-            drawToolbar.on("onDrawEnd", addToMap);
+//            drawToolbar.on("onDrawEnd", addToMap);
             on(drawToolbar, "draw-end", addToMap);
-//            dojo.connect(tb, "onDrawEnd", addGraphic);
+
             function addToMap(evt) {
-                alert("drawing completed");
                 drawToolbar.deactivate();
                 var graphic = new Graphic(evt.geometry, new SimpleFillSymbol());
                 map.graphics.add(graphic);
             }
+
+            var buttonClearGraphics = new Button({
+                label: "Clear Graphics",
+                onClick: function(){
+                    map.graphics.clear();                }
+            }, "clearGraphicsButton");
+
+//            dom.byId("queryPane").appendChild(buttonClearGraphics)
 });

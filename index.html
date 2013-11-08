@@ -34,17 +34,21 @@
             <div data-dojo-type="dijit/layout/ContentPane" title="Select">
                 <div id="tocDiv"></div>
             </div>
-            <div data-dojo-type="dijit/layout/ContentPane" title="Query" selected="true">
-                <div id="measurePane" data-dojo-type="dijit/TitlePane" data-dojo-props="title:'Measurement', closable:'false', open:'false'">
+            <div id="queryPane"  data-dojo-type="dijit/layout/ContentPane" title="Query" selected="true">
+                <div id="measurePane" data-dojo-type="dijit/TitlePane" data-dojo-props="title:'Measurement', closable:'false', open:false">
                     <div id='measurementDiv'></div>
                 </div>
-                <div id="spatialQueryPane" data-dojo-type="dijit/TitlePane" data-dojo-props="title:'Spatial Query', closable:'false', open:'false'">
+                <div id="spatialQueryPane" data-dojo-type="dijit/TitlePane" data-dojo-props="title:'Spatial Query', closable:'false', open:false">
                     Select by:
                     <div id='spatialSelectionType'></div>
                 </div>
-                <div id="attributeQueryPane" data-dojo-type="dijit/TitlePane" data-dojo-props="title:'Attribute Query', closable:'false', open:'false'">
+                <div id="attributeQueryPane" data-dojo-type="dijit/TitlePane" data-dojo-props="title:'Attribute Query', closable:'false', open:false">
                     attribute query functionality
                 </div>
+                <div id="queryTools" data-dojo-type="dijit/TitlePane" data-dojo-props="title:'Tools', closable:'false', open:false">
+                    <button id="clearGraphicsButton" type="button"></button>
+                </div>
+
             </div>
         </div><!-- end TabContainer -->
     </div>
