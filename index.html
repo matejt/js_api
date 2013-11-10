@@ -3,6 +3,8 @@
 <head>
 
     <link rel="stylesheet" href="http://js.arcgis.com/3.7/js/dojo/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.7/js/dojo/dojox/grid/resources/Grid.css">
+    <link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.7/js/dojo/dojox/grid/resources/claroGrid.css">
     <link rel="stylesheet" href="http://js.arcgis.com/3.7/js/esri/css/esri.css">
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="../dojox/layout/resources/ExpandoPane.css">
@@ -69,6 +71,18 @@
         </div>
     </div><!-- end TabContainer -->
     <div data-dojo-type="dojox/layout/ExpandoPane" data-dojo-props="title:'Attribute data', splitter:true, region:'bottom', startExpanded:false" style="height: 225px;">
+        <table dojoType="dojox/grid/DataGrid" jsid="grid" id="grid" clientSort="true" style="width: 600px; height: 600px;" rowSelector="20px" sortInfo="-4">
+            <thead>
+            <tr>
+                <th width="100px" field="LocNum">LocNum</th>
+                <th width="100px" field="County">County</th>
+                <th width="100px" field="wellorient">WellOrient</th>
+                <th width="250px" field="operatorName">OperatorName</th>
+                <th width="150px" field="API">API</th>
+                <th width="170px" field="PermitPublishDate">PermitPublishDate</th>
+            </tr>
+            </thead>
+        </table>
     </div>
 
 </div><!-- end BorderContainer -->

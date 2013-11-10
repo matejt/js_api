@@ -2,10 +2,12 @@
 require([
     "dojo/on",
     "dojo/dom",
+    "dojo/dom-attr",
     "dojo/parser",
     "agsjs/dijit/TOC",
     "dojo/_base/array",
     "dojo/store/Memory",
+    "dojo/data/ItemFileReadStore",
     "esri/map",
     "esri/layers/FeatureLayer",
     "esri/layers/ArcGISTiledMapServiceLayer",
@@ -19,8 +21,11 @@ require([
     "esri/toolbars/draw",
     "esri/graphic",
     "esri/symbols/SimpleFillSymbol",
+    "esri/tasks/QueryTask",
+    "esri/tasks/query",
     "dijit/form/FilteringSelect",
     "dijit/form/Button",
+    "dojox/grid/DataGrid",
     "dijit/layout/ContentPane",
     "dijit/layout/BorderContainer",
     "dijit/layout/TabContainer",
@@ -31,10 +36,12 @@ require([
     "dojo/domReady!"], function (
         on,
         dom,
+        domAttr,
         parser,
         TOC,
         arrayUtils,
         Memory,
+        ItemFileReadStore,
         Map,
         FeatureLayer,
         TiledLayer,
@@ -48,8 +55,11 @@ require([
         Draw,
         Graphic,
         SimpleFillSymbol,
+        QueryTask,
+        Query,
         FilteringSelect,
-        Button
+        Button,
+        DataGrid
         ) {
             parser.parse();
 
@@ -63,7 +73,6 @@ require([
 
             var json = {title:"Attributes",content:"<tr>API: <td>${API}</tr></td><br><tr>Operator: <td>${operatorName}</tr><br><tr>objectId: <td>${OBJECTID}</tr></td>"}
             var infoTemplate = new InfoTemplate("Well Information", "${*}");
-//            rigsUrlFeatureLayer = "http://services1.arcgis.com/5gRznzsV72O3QAUT/arcgis/rest/services/EagleFord_07_Feature/FeatureServer/0";
             rigsUrlFeatureLayer = "http://services1.arcgis.com/5gRznzsV72O3QAUT/arcgis/rest/services/EagleFord_08/FeatureServer/0";
             var rigsFeatureLayer = new FeatureLayer(rigsUrlFeatureLayer, {
                 id: "rigsFeatures",
@@ -167,6 +176,57 @@ require([
                 drawToolbar.deactivate();
                 var graphic = new Graphic(evt.geometry, new SimpleFillSymbol());
                 map.graphics.add(graphic);
+
+                query = new Query();
+                query.returnGeometry = false;
+                query.outFields = ["LocNum", "County", "WellOrient","OperatorName", "API", "PermitPublishDate"];
+                query.spatialRelationship = esri.tasks.Query.SPATIAL_REL_INTERSECTS;
+                query.geometry = evt.geometry;
+                query.where = "1=1";
+
+                queryTask = new QueryTask(rigsUrlFeatureLayer);
+                queryTask.execute(query, processResults, errCallback);
+                attrPane = dom.byId("attributeQueryPane");
+                domAttr.set(attrPane, open, true);
+
+            }
+
+            function processResults(results) {
+                map.graphics.clear();
+                var symbol = new esri.symbol.SimpleFillSymbol(
+                    esri.symbol.SimpleFillSymbol.STYLE_NULL,
+                    new esri.symbol.SimpleLineSymbol(esri.symbol.SimpleFillSymbol.STYLE_SOLID,
+                        new dojo.Color([100,100,100]), 4), new dojo.Color([0,0,255,0.20]));
+
+                var featureSet = results.features;
+
+                //Create items array to be added to store's data
+                var items = []; //all items to be stored in data store
+                var totVals = featureSet.length;
+                for (var i=0, il=featureSet.length; i<il; i++) {
+                    var graphic = featureSet[i];
+                    graphic.setSymbol(symbol);
+                    map.graphics.add(graphic);
+                    items.push(featureSet[i].attributes);
+                }
+
+                //Create data object to be used in store
+                var data = {
+                    identifier: "LocNum",  //This field needs to have unique values
+                    label: "LocNum", //Name field for display. Not pertinent to a grid but may be used elsewhere.
+                    items: items
+                };
+
+                console.log(data);
+
+                //Create data store and bind to grid.
+                store = new ItemFileReadStore({ data:data });
+                grid.setStore(store);
+//                hideLoading();
+            }
+
+            function errCallback(err) {
+                console.log(err.message);
             }
 
             var buttonClearGraphics = new Button({
