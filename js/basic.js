@@ -18,6 +18,7 @@ require([
     "esri/geometry/Extent",
     "esri/SpatialReference",
     "esri/dijit/Measurement",
+    "esri/dijit/OverviewMap",
     "esri/toolbars/draw",
     "esri/graphic",
     "esri/symbols/SimpleFillSymbol",
@@ -52,6 +53,7 @@ require([
         Extent,
         SpatialReference,
         Measurement,
+        OverviewMap,
         Draw,
         Graphic,
         SimpleFillSymbol,
@@ -118,6 +120,8 @@ require([
                   map: map
                 }, dojo.byId('measurementDiv'));
                 measurement.startup();
+
+                addOverviewMap();
             });
 
             map.addLayers([tiledSoilLayer, rigsFeatureLayer]);
@@ -235,5 +239,12 @@ require([
                     map.graphics.clear();                }
             }, "clearGraphicsButton");
 
-//            dom.byId("queryPane").appendChild(buttonClearGraphics)
+            function addOverviewMap() {
+                var overviewMapDijit = new OverviewMap({
+                    map: map,
+                    attachTo: "top-right",
+                    visible: false
+                });
+                overviewMapDijit.startup();
+            }
 });

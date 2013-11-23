@@ -35,6 +35,15 @@
             </div>
             <div data-dojo-type="dijit/layout/ContentPane" title="Select">
                 <div id="tocDiv"></div>
+                <br>
+                <div>
+                    <div data-dojo-type="dijit/TitlePane"
+                         data-dojo-props="title:'Switch Basemap', closable:false,  open:false">
+                        <div data-dojo-type="dijit/layout/ContentPane" style="width:150px; height:280px; overflow:auto;">
+                            <div id="basemapGallery" ></div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div id="queryPane"  data-dojo-type="dijit/layout/ContentPane" title="Query" selected="true">
                 <div id="measurePane" data-dojo-type="dijit/TitlePane" data-dojo-props="title:'Measurement', closable:'false', open:false">
@@ -56,15 +65,6 @@
     </div>
     <div data-dojo-type="dijit/layout/TabContainer" data-dojo-props="region:'center', tabStrip:true">
         <div id="map" data-dojo-type="dijit/layout/ContentPane" title="Map" selected="true">
-              <div style="position:absolute; right:20px; top:10px; z-Index:999;">
-                <div data-dojo-type="dijit/TitlePane"
-                    data-dojo-props="title:'Switch Basemap', closable:false,  open:false">
-                    <div data-dojo-type="dijit/layout/ContentPane" style="width:380px; height:280px; overflow:auto;">
-                        <div id="basemapGallery" ></div>
-                    </div>
-                </div>
-            </div>
-
         </div>
         <div data-dojo-type="dijit/layout/ContentPane" title="Info">
             more information...
